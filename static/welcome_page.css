@@ -22,3 +22,7 @@ body{
 	color: #404040;
 	font-family: monospace;
 }
+
+.list-sec h1 {
+	font-size: 60px;
+  }
