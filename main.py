@@ -1,4 +1,8 @@
+import uuid
 from flask import Flask, flash, redirect, render_template, request, session, abort, url_for
+
+from utils import get_users_list, get_entities
+from DB import client, datastore
 from Auth import auth, db, request_user
 
 app = Flask(__name__)
@@ -7,7 +11,7 @@ app = Flask(__name__)
 # Login
 @app.route("/")
 def login():
-    if request_user["is_logged_in"]:
+    if request_user["is_logged_in"] == True:
         return render_template("dashboard.html", email=request_user["email"], name=request_user["name"])
     else:
         return render_template("login.html")
@@ -29,9 +33,26 @@ def signup():
 
 # Welcome page
 @app.route("/dashboard")
-def welcome():
+def dashboard():
     if request_user["is_logged_in"]:
-        return render_template("dashboard.html", email=request_user["email"], name=request_user["name"])
+        data = get_entities(request_user["uid"])
+        return render_template("dashboard.html", data=data, email=request_user["email"], name=request_user["name"])
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route("/list")
+def task_display_list():
+    if request_user["is_logged_in"]:
+        return render_template("list.html",  email=request_user["email"], name=request_user["name"])
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route("/task-detail")
+def task_details():
+    if request_user["is_logged_in"]:
+        return render_template("task-details.html", email=request_user["email"], name=request_user["name"])
     else:
         return redirect(url_for('login'))
 
@@ -46,7 +67,7 @@ def result():
         try:
             # Try signing in the user with the given information
             user = auth.sign_in_with_email_and_password(email, password)
-
+            global request_user
             request_user["is_logged_in"] = True
             request_user["email"] = user["email"]
             request_user["uid"] = user["localId"]
@@ -55,8 +76,9 @@ def result():
             request_user["name"] = data.val()[request_user["uid"]]["name"]
             # Redirect to welcome page
             return redirect(url_for('dashboard'))
-        except:
+        except Exception as e:
             # If there is any error, redirect back to login
+            print(e)
             return redirect(url_for('login'))
     else:
         if request_user["is_logged_in"]:
@@ -86,17 +108,139 @@ def register():
             # Append data to the firebase realtime database
             data = {"name": name, "email": email}
             db.child("users").child(request_user["uid"]).set(data)
+
+            # Create User entity in datastore
+            key = client.key(request_user["uid"], request_user["name"])
+            entity = datastore.Entity(key=key)
+            client.put(entity)
+
             # Go to welcome page
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('login'))
         except:
             # If there is any error, redirect to register
             return redirect(url_for('register'))
 
     else:
-        if request_user["is_logged_in"]:
+        return redirect(url_for('login'))
+
+
+@app.route("/create-board", methods=["POST", "GET"])
+def create_board():
+    if request_user["is_logged_in"]:
+        if request.method == "POST":  # Only listen to POST
+            result = request.form
+            board_id = str(uuid.uuid4())
+            board_name = result.get("board_name", None)
+
+            # Adding board in user entity
+            key = client.key(request_user["uid"], board_id)
+            entity = datastore.Entity(key=key)
+            entity.update({
+                "board_id": board_id,
+                "board_name": board_name,
+                "owner_id": request_user["uid"]
+            })
+            client.put(entity)
+
+            # Creating board entity
+            key_2 = client.key(board_id, board_name)
+            entity_2 = datastore.Entity(key=key_2)
+            client.put(entity_2)
             return redirect(url_for('dashboard'))
-        else:
-            return redirect(url_for('register'))
+        elif request.method == "GET":
+            return render_template("create_board.html")
+
+    else:
+        return render_template("login.html")
+
+
+@app.route("/<board_id>/list-tasks", methods=["GET"])
+def list_tasks(board_id):
+    if request_user["is_logged_in"]:
+        data = get_entities(board_id)
+        print(board_id)
+        return render_template("list.html", data=data)
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route("/update-board/<board_id>", methods=["POST"])
+def update_board(board_id):
+    if request_user["is_logged_in"]:
+        if request.method == "POST":  # Only listen to POST
+            result = request.form
+            board_name = result.get("board_name", None)
+
+            # Adding board in user entity
+            key = client.key(request_user["uid"], board_id)
+            entity = datastore.Entity(key=key)
+            entity.update({
+                "board_name": board_name
+            })
+            client.put(entity)
+
+            # Creating board entity
+            key_2 = client.key(board_id, board_name)
+            entity_2 = datastore.Entity(key=key_2)
+            client.put(entity_2)
+    else:
+        return render_template("login.html")
+
+
+@app.route("/<board_id>/create-task", methods=["POST", "GET"])
+def create_task(board_id):
+    if request_user["is_logged_in"]:
+        if request.method == "POST":  # Only listen to POST
+            result = request.form
+            task_id = str(uuid.uuid4())
+            task_name = result.get("task_name", None)
+            due_date = result.get("due_date", None)
+            completed = result.get("completed", None)
+            assigned_to = result.get("assigned_to_id", None)
+
+            # Adding task in board entity
+            key = client.key(board_id, task_id)
+            entity = datastore.Entity(key=key)
+            entity.update({
+                "task_id": task_id,
+                "task_name": task_name,
+                "due_date": "due_date",
+                "completed": False,
+                "assigned_to": "assigned_to_id"
+            })
+            client.put(entity)
+        elif request.method == "GET":
+            return render_template("list.html", users_list=get_users_list())
+    else:
+        return render_template("login.html")
+
+
+@app.route("/<board_id>/update-task/<task_id>", methods=["POST", "GET"])
+def update_task(board_id, task_id):
+    if request_user["is_logged_in"]:
+        if request.method == "POST":  # Only listen to POST
+            result = request.form
+            due_date = result.get("due_date", None)
+            completed = result.get("completed", None)
+            assigned_to = result.get("assigned_to_id", None)
+
+            updated_data = {}
+            if due_date:
+                updated_data["due_date"] = due_date
+            if completed is not None:
+                updated_data["completed"] = completed
+            if assigned_to:
+                updated_data["assigned_to"] = assigned_to
+
+            # Updating task in board entity
+            key = client.key(board_id, task_id)
+            entity = datastore.Entity(key=key)
+            entity.update(updated_data)
+            client.put(entity)
+        elif request.method == "GET":
+            return render_template("list.html", users_list=get_users_list())
+    else:
+        return render_template("login.html")
 
 
 if __name__ == "__main__":
