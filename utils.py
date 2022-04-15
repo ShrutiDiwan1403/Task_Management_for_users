@@ -289,5 +289,25 @@ def delete_task(owner_id, board_id, task_id):
     client.put(entity)
     return redirect(url_for('.list_tasks', user_id=request_user['uid'], board_id=board_id, owner_id=owner_id))
 
+@app.route("/<board_id>/delete-board/<board_name>", methods=["GET"])
+def delete_board(board_id, board_name):
+    # Adding board in user entity
+    key = client.key(request_user["uid"], board_id)
+    entity = datastore.Entity(key=key)
+    client.put(entity)
+
+    # Creating board entity
+    key_2 = client.key(board_id, board_name)
+    client.delete(key_2)
+    return redirect(url_for('dashboard'))
+
+
+@app.route("/<owner_id>/<board_id>/delete-task/<task_id>", methods=["GET"])
+def delete_task(owner_id, board_id, task_id):
+    key = client.key(str(board_id), task_id)
+    entity = datastore.Entity(key=key)
+    client.put(entity)
+    return redirect(url_for('.list_tasks', user_id=request_user['uid'], board_id=board_id, owner_id=owner_id))    
+
 if __name__ == "__main__":
     app.run(debug=True)          
