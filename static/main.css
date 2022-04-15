@@ -84,7 +84,7 @@ h2.active {
 /* FORM TYPOGRAPHY*/
 
 input[type=button], input[type=submit], input[type=reset]  {
-  background-color: #222222;
+  background-color: #009d22;
   border: none;
   color: white;
   padding: 15px 80px;
@@ -102,10 +102,6 @@ input[type=button], input[type=submit], input[type=reset]  {
   -ms-transition: all 0.3s ease-in-out;
   -o-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
-}
-
-input[type=button]:hover, input[type=submit]:hover, input[type=reset]:hover  {
-  background-color: #222222;
 }
 
 input[type=button]:active, input[type=submit]:active, input[type=reset]:active  {
@@ -279,4 +275,29 @@ input[type=email]:placeholder, input[type=password]:placeholder, input[type=text
 .form-group.date {
     width: 85%;
     margin: 20px auto;
+}
+
+.btn {
+background-color: #22222 !import;
+}
+
+.back {
+    width: 85%;
+    margin-bottom: 25px;
+    margin-top: -20px;
+    background-color: #000;
+    color: #fff;
+    padding: 15px 80px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    text-transform: uppercase;
+    font-size: 13px;
+    border-radius: 5px 5px 5px 5px;
+    text-decoration:none;
+}
+
+.back:hover{
+  color:#fff;
+  text-decoration:none;
 }

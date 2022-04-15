@@ -30,3 +30,22 @@ body{
 .sec {width: 50%;}
 
 .card-body {width: 100%;display: flex;flex-wrap: wrap;}
+
+.text-sec {
+    width: 100%;
+    box-shadow: 2px 4px 30px -10px #004b85;
+    border-radius: 5px;
+    background-color: #ffc107;
+    font-weight: bold;
+    padding: 14px 0 2px;
+    margin-bottom: 12px;
+    margin-top: 10px;
+    display:flex;
+}
+
+.text-sec a.btn.btn-danger {
+    margin-top: -4px;
+    justify-content: center;
+}
+
+.text-sec a {display: flex;color: #000;text-decoration: none;}
