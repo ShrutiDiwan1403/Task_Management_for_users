@@ -1,7 +1,7 @@
 import uuid
 from flask import Flask, flash, redirect, render_template, request, session, abort, url_for
 
-from utils import get_users_list, get_entities
+from utils import get_users_list, get_entities, get_task_details, get_user_details
 from DB import client, datastore
 from Auth import auth, db, request_user
 
@@ -154,16 +154,6 @@ def create_board():
         return render_template("login.html")
 
 
-@app.route("/<board_id>/list-tasks", methods=["GET"])
-def list_tasks(board_id):
-    if request_user["is_logged_in"]:
-        data = get_entities(board_id)
-        print(board_id)
-        return render_template("list.html", data=data)
-    else:
-        return redirect(url_for('login'))
-
-
 @app.route("/update-board/<board_id>", methods=["POST"])
 def update_board(board_id):
     if request_user["is_logged_in"]:
@@ -195,22 +185,23 @@ def create_task(board_id):
             task_id = str(uuid.uuid4())
             task_name = result.get("task_name", None)
             due_date = result.get("due_date", None)
-            completed = result.get("completed", None)
-            assigned_to = result.get("assigned_to_id", None)
+            completed = result.get("completed", False)
+            assigned_to = result.get("assigned_to", None)
 
             # Adding task in board entity
-            key = client.key(board_id, task_id)
+            key = client.key(str(board_id), task_id)
             entity = datastore.Entity(key=key)
             entity.update({
                 "task_id": task_id,
                 "task_name": task_name,
-                "due_date": "due_date",
-                "completed": False,
-                "assigned_to": "assigned_to_id"
+                "due_date": due_date,
+                "completed": completed,
+                "assigned_to": assigned_to
             })
             client.put(entity)
+            return redirect(url_for('.list_tasks', board_id=board_id))
         elif request.method == "GET":
-            return render_template("list.html", users_list=get_users_list())
+            return render_template("create_task.html", board_id=board_id, users_list=get_users_list())
     else:
         return render_template("login.html")
 
@@ -237,10 +228,32 @@ def update_task(board_id, task_id):
             entity = datastore.Entity(key=key)
             entity.update(updated_data)
             client.put(entity)
+            return redirect(url_for('.list_tasks', board_id=board_id))
         elif request.method == "GET":
-            return render_template("list.html", users_list=get_users_list())
+            data = get_task_details(board_id, task_id)
+            return render_template("edit_task.html", users_list=get_users_list(), data=data, task_id=task_id, board_id=board_id)
     else:
         return render_template("login.html")
+
+
+@app.route("/<board_id>/list-tasks", methods=["GET"])
+def list_tasks(board_id):
+    if request_user["is_logged_in"]:
+        data = get_entities(board_id)
+        return render_template("list.html", board_id=board_id, data=data)
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route("/<board_id>/view-task/<task_id>", methods=["GET"])
+def task_datils(board_id, task_id):
+    if request_user["is_logged_in"]:
+        data = get_task_details(board_id, task_id)
+        user_id = data['assigned_to']
+        user = get_user_details(user_id)
+        return render_template("task-details.html", data=data, user=user, board_id=board_id)
+    else:
+        return redirect(url_for('login'))
 
 
 if __name__ == "__main__":
