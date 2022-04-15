@@ -1,6 +1,7 @@
 from DB import client
 from Auth import db, request_user
 
+
 def get_users_list():
     all_users = db.child("users").get()
 
@@ -29,3 +30,17 @@ def get_entities(entity_kind):
 
     return list(filter(None, data))
 
+
+def get_task_details(board_id, task_id):
+    data = get_entities(board_id)
+
+    for obj in data:
+        if obj.get("task_id") == task_id:
+            return obj
+
+
+def get_user_details(user_id):
+    data = get_users_list()
+    for obj in data:
+        if obj.get("user_id") == user_id:
+            return obj
