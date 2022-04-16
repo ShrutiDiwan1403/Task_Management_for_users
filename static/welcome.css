@@ -24,12 +24,13 @@ body{
 }
 
 .list-sec h1 {
-	font-size: 60px;
-  }
+  font-size: 60px;
+}
 
 .sec {width: 50%;}
 
 .card-body {width: 100%;display: flex;flex-wrap: wrap;}
+
 
 .text-sec {
     width: 100%;
