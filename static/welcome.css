@@ -71,3 +71,7 @@ body{
 .text-sec.red_sec a {color: #fff;}
 
 .text-sec.red_sec a.btn.btn-danger {background: #000;}
+
+.text-sec.red_sec a.btn.btn-danger {
+    background: #f9c133;
+}
