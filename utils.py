@@ -101,3 +101,23 @@ def get_board_details(user_id, board_id):
     for obj in data:
         if obj.get("board_id") == board_id:
             return obj
+
+
+def check_task_name(board_id, task_name):
+    data = get_entities(board_id, "task")
+
+    for obj in data:
+        if obj.get("task_name").strip().lower() == task_name.strip().lower():
+            return True
+
+    return False
+
+
+def check_if_board_can_be_deleted(board_id):
+    data = get_entities(board_id, "task")
+
+    for obj in data:
+        if obj.get("completed") == False:
+            return False
+
+    return True
