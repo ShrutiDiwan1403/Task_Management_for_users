@@ -18,7 +18,7 @@
 
     <form action="http://127.0.0.1:5000/{{ board_id }}/update-task/{{ task_id }}" method="POST">
       <div class="form-group">
-        <input type="text" id="task_name" class="form-control fadeIn second" value="{{ data.task_name }}" name="name" placeholder="Task Name">
+        <input type="text" id="task_name" class="form-control fadeIn second" value="{{ data.task_name }}" name="name" placeholder="Task Name" disabled>
       </div>
       <div class="form-group date">
           <input type="date" id="due_date" class="form-control fadeIn second" name="due_date" value="{{ data.due_date }}" placeholder="Due Date">
