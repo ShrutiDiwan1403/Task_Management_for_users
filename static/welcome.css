@@ -50,3 +50,24 @@ body{
 }
 
 .text-sec a {display: flex;color: #000;text-decoration: none;}
+
+.box-sec {
+    align-items: center;
+    width: 100%;
+    display: flex;
+    background-color: #041c76;
+    color: #fff;
+    text-align: center;
+    padding: 12px 15px;
+    border-radius: 6px;
+}
+
+.box-sec span {font-weight: bolder;margin-left: auto;}
+
+.box-sec h6 {margin: 0;margin-right: 20px;font-weight: bold;}
+
+.text-sec.red_sec {background: red;}
+
+.text-sec.red_sec a {color: #fff;}
+
+.text-sec.red_sec a.btn.btn-danger {background: #000;}
