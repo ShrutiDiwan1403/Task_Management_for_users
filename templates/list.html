@@ -41,22 +41,29 @@
     </div>
     </div>
     <div class="row">
+        <div class="col-md-3"><div class="box-sec"><h6>Total Tasks</h6> <span>{{task_status.total_tasks}}</span></div></div>
+        <div class="col-md-3"><div class="box-sec"><h6>Active Tasks</h6> <span>{{task_status.active_tasks}}</span></div></div>
+        <div class="col-md-3"><div class="box-sec"><h6>Completed Tasks</h6> <span>{{task_status.completed_tasks}}</span></div></div>
+        <div class="col-md-3"><div class="box-sec"><h6>Completed Tasks Today</h6> <span>{{task_status.completed_tasks_today}}</span></div></div>
+    </div>
+
+    <div class="row" style="margin-top:60px;">
       <div class="col-md-3"><h4>Tasks name</h4></div>
-      <div class="col-md-3"><h4>Due Date</h4></div>
-      <div class="col-md-3"><h4>Task Status</h4></div>
-      <div class="col-md-3"><h4>Action</h4></div>
+      <div class="col-md-2"><h4>Due Date</h4></div>
+      <div class="col-md-2"><h4>Task Status</h4></div>
+      <div class="col-md-3"><h4>Completed On</h4></div>
+      <div class="col-md-2"><h4>Action</h4></div>
     </div>
 
     {% for obj in data %}
      <div class="row">
-         <div class="text-sec">
+         <div class="text-sec {% if obj.assigned_to == 'Select User' %} red_sec {% endif %} ">
              <div class="col-md-3"><p><a href="http://127.0.0.1:5000/{{board_id}}/view-task/{{ obj.task_id }}">{{ obj.task_name }}</a></p></div>
-             <div class="col-md-3"><p><a href="http://127.0.0.1:5000/{{board_id}}/view-task/{{ obj.task_id }}">{{ obj.due_date }}</a></p></div>
-             <div class="col-md-3"><p><a href="http://127.0.0.1:5000/{{board_id}}/view-task/{{ obj.task_id }}">{{ obj.completed }}</a></p></div>
-              <div class="col-md-3">
-                 {% if obj.owner_id == user_id %}
-                    <a href="http://127.0.0.1:5000/{{ owner_id }}/{{ obj.board_id }}/delete-task/{{ obj.task_id }}" class="btn btn-danger">Delete</a>
-                {% endif %}
+             <div class="col-md-2"><p><a href="http://127.0.0.1:5000/{{board_id}}/view-task/{{ obj.task_id }}">{{ obj.due_date }}</a></p></div>
+             <div class="col-md-2"><p><a href="http://127.0.0.1:5000/{{board_id}}/view-task/{{ obj.task_id }}">{{ obj.completed }}</a></p></div>
+             <div class="col-md-3"><p><a href="http://127.0.0.1:5000/{{board_id}}/view-task/{{ obj.task_id }}">{% if obj.completed_on_date %} {{ obj.completed_on_date }} {% else %} - {% endif %}</a></p></div>
+              <div class="col-md-2">
+                  <a href="http://127.0.0.1:5000/{{ owner_id }}/{{ obj.board_id }}/delete-task/{{ obj.task_id }}" class="btn btn-danger">Delete</a>
              </div>
          </div>
     </div>
