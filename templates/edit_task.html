@@ -18,7 +18,7 @@
 
     <form action="http://127.0.0.1:5000/{{ board_id }}/update-task/{{ task_id }}" method="POST">
       <div class="form-group">
-        <input type="text" id="task_name" class="form-control fadeIn second" value="{{ data.task_name }}" name="task_name" placeholder="Task Name" disabled>
+        <input type="text" id="task_name" class="form-control fadeIn second" value="{{ data.task_name }}" name="name" placeholder="Task Name">
       </div>
       <div class="form-group date">
           <input type="date" id="due_date" class="form-control fadeIn second" name="due_date" value="{{ data.due_date }}" placeholder="Due Date">
@@ -27,7 +27,7 @@
           <select class="form-control" name="assigned_to">
             <option>Select User</option>
             {% for user in users_list  %}
-                <option value="{{ user.user_id }}">{{ user.name }} </option>
+                <option value="{{ user.user_id }}" {% if user.user_id == data.assigned_to  %} selected {% endif %}>{{ user.name }} </option>
             {% endfor %}
         </select>
       </div>
@@ -36,7 +36,8 @@
         <label class="form-check-label" for="exampleCheck1">Mark as Done</label>
       </div>
       <input type="hidden" name="owner_id" value="{{ data.owner_id }}">
-      <input type="hidden" name="board_id" value="{{ data.board_id }}">
+      <input type="hidden" name="owner_id" value="{{ data.owner_id }}">
+      <input type="hidden" name="task_name" value="{{ data.task_name }}">
       <input type="submit" class="fadeIn fourth" value="Save">
     </form>
     <a href="http://127.0.0.1:5000/{{ data.board_id }}/view-task/{{ data.task_id }}" class="back">Back</a>
