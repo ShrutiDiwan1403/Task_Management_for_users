@@ -278,7 +278,8 @@ input[type=email]:placeholder, input[type=password]:placeholder, input[type=text
 }
 
 .btn {
-background-color: #22222 !import;
+/*background-color: #22222 !import;*/
+background-color: #22222a ; 
 }
 
 .back {
