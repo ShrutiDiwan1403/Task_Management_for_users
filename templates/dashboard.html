@@ -46,15 +46,16 @@
                 </a>
             </div>
             <div class="col-md-2 text-right">
-                {% if obj.owner_id == user_id %}
-                <a href="http://127.0.0.1:5000/{{ obj.board_id }}/update-board" class="btn btn-success">Edit</a>
+                {% if obj.owner_id == user_id and obj.can_delete %}
+                <a href="http://127.0.0.1:5000/{{ obj.board_id }}/delete-board/{{ obj.board_name }}" class="btn btn-danger">Delete</a>
                 {% endif %}
             </div>
             <div class="col-md-2">
                 {% if obj.owner_id == user_id %}
-                <a href="http://127.0.0.1:5000/{{ obj.board_id }}/delete-board/{{ obj.board_name }}" class="btn btn-danger">Delete</a>
+                <a href="http://127.0.0.1:5000/{{ obj.board_id }}/update-board" class="btn btn-success">Edit</a>
                 {% endif %}
             </div>
+
         </div>
         {% endfor %}
     </div>
@@ -62,4 +63,5 @@
 </main>
 
 </body>
+
 
