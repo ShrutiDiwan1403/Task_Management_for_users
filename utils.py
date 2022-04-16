@@ -92,4 +92,12 @@ def get_user_details(user_id):
     for obj in data:
         if obj.get("user_id") == user_id:
             return obj
-    return {"name": request_user['name']}    
+    return {"name": request_user['name']}
+
+
+def get_board_details(user_id, board_id):
+    data = get_entities(user_id, "board")
+
+    for obj in data:
+        if obj.get("board_id") == board_id:
+            return obj

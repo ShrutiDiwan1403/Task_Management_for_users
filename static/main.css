@@ -278,8 +278,7 @@ input[type=email]:placeholder, input[type=password]:placeholder, input[type=text
 }
 
 .btn {
-/*background-color: #22222 !import;*/
-background-color: #22222a ; 
+background-color: #22222a !important;
 }
 
 .back {
@@ -301,4 +300,10 @@ background-color: #22222a ;
 .back:hover{
   color:#fff;
   text-decoration:none;
+}
+
+.form-check.box {
+    text-align: left;
+    padding-left: 55px;
+    margin-bottom: 10px;
 }
