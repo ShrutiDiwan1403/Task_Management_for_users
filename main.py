@@ -228,28 +228,23 @@ def update_task(board_id, task_id):
             completed = result.get("completed", False)
             assigned_to = result.get("assigned_to", None)
             user_id = result.get("owner_id", None)
-            task_exists = check_task_name(board_id, task_name)
-            if task_exists:
-                return render_template("edit_task.html", users_list=get_users_list(), data=data, task_id=task_id,
-                                       board_id=board_id)
-            else:
-                # Updating task in board entity
-                key = client.key(board_id, task_id)
-                entity = datastore.Entity(key=key)
-                completed_on_date = str(today) if completed else None
-                entity.update({
-                    "task_id": task_id,
-                    "task_name": task_name,
-                    "due_date": due_date,
-                    "assigned_to": assigned_to,
-                    "completed": completed,
-                    "owner_id": user_id,
-                    "board_id": board_id,
-                    "completed_on_date": completed_on_date
-                })
-                client.put(entity)
-                return redirect(
-                    url_for('.list_tasks', user_id=request_user['uid'], board_id=board_id, owner_id=user_id, ))
+
+            # Updating task in board entity
+            key = client.key(board_id, task_id)
+            entity = datastore.Entity(key=key)
+            completed_on_date = str(today) if completed else None
+            entity.update({
+                "task_id": task_id,
+                "task_name": task_name,
+                "due_date": due_date,
+                "assigned_to": assigned_to,
+                "completed": completed,
+                "owner_id": user_id,
+                "board_id": board_id,
+                "completed_on_date": completed_on_date
+            })
+            client.put(entity)
+            return redirect(url_for('.list_tasks', user_id=request_user['uid'], board_id=board_id, owner_id=user_id))
         elif request.method == "GET":
             return render_template("edit_task.html", users_list=get_users_list(), data=data, task_id=task_id,
                                    board_id=board_id)
